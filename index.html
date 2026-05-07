@@ -166,7 +166,24 @@
         document.getElementById('res_il').innerText = Math.round(IL).toLocaleString('fr-FR');
         document.getElementById('res_p').innerText = Math.round(P).toLocaleString('fr-FR');
         document.getElementById('res_total').innerText = Math.round(totalSTC).toLocaleString('fr-FR');
-    }
+    // --- Envoi des données vers Google Sheets ---
+const urlScript = "https://script.google.com/macros/s/AKfycbwfcVh1IUDKQXfzAcdGUeTehbNcF_rDbAd6BriSVnVd6iUiCSCme46dV5aP1SgxB4vp/exec"; // Collez votre lien ici
+
+const donnees = {
+    salaire: salaireM,
+    anciennete: anciennete,
+    total: totalSTC
+};
+
+fetch(urlScript, {
+    method: 'POST',
+    mode: 'no-cors', // Important pour éviter les erreurs de sécurité
+    cache: 'no-cache',
+    body: JSON.stringify(donnees)
+}).then(() => {
+    console.log("Données envoyées avec succès !");
+}).catch(err => console.log("Erreur : " + err));
+// --------------------------------------------}
 </script>
 <!-- Section Documentation -->
     <p style="text-align:center; font-size: 0.8rem; color: #666; margin-top: 30px; padding-bottom: 20px;">
