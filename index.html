@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kajy STC Madagascar - Loi 2024</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue: #0046ad; --green: #28a745; --bg: #f8f9fa; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #333; padding: 20px; }
+        .card { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: var(--blue); text-align: center; margin-bottom: 5px; }
+        .sub { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 30px; }
+        .section-title { background: #eef2f7; padding: 10px; border-radius: 5px; font-weight: 700; margin: 20px 0 15px 0; color: var(--blue); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #555; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        #btn { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 6px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        #result-box { margin-top: 30px; display: none; padding: 20px; border-radius: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .total { font-size: 1.6rem; font-weight: 800; color: var(--green); margin-top: 15px; border: none; }
+        .alert { font-size: 0.8rem; color: #d9534f; margin-top: 10px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Kajy STC 🇲🇬</h1>
+    <p class="sub">Fikajiana ny Solde de Tout Compte araka ny Loi n°2024-014</p>
+
+    <div class="section-title">1. Karama sy Fotoana (Salaire & Temps)</div>
+    <div class="grid">
+        <div class="field">
+            <label>Karama isam-bolana (Salaire mensuel Ar)</label>
+            <input type="number" id="salaire_mensuel" placeholder="600000">
+        </div>
+        <div class="field">
+            <label>Andro fiasana ao anatin'ny volana (Jours ouvrables)</label>
+            <input type="number" id="jours_ouvrables" value="30">
+        </div>
+        <div class="field">
+            <label>Andro tena niasana (Jours travaillés)</label>
+            <input type="number" id="jours_travailles" placeholder="Andro niasana farany">
+        </div>
+        <div class="field">
+            <label>Ancienneté (Isan'ny taona niasana)</label>
+            <input type="number" id="anciennete" placeholder="Ohatra: 3.5">
+        </div>
+    </div>
+
+    <div class="section-title">2. Ireo Indemnités (ICP, IP, IL, P)</div>
+    <div class="grid">
+        <div class="field">
+            <label>Somme salaire brute en une année</label>
+            <input type="number" id="total_brut_annee" placeholder="Tontalin'ny karama brute isan-taona">
+        </div>
+        <div class="field">
+            <label>Nombre de jours de congé non pris (Solde)</label>
+            <input type="number" id="conge_non_pris" placeholder="Isan'ny andro sisa">
+        </div>
+        <div class="field">
+            <label>Catégorie Professionnelle (ho an'ny IP)</label>
+            <select id="categorie_pro">
+                <option value="OP">Ouvrier / Employé (OP)</option>
+                <option value="Cadre">Cadre / Position 5</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Montant de la prime / 13ème mois</label>
+            <input type="number" id="prime_totale" placeholder="Tontalin'ny prime">
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="field">
+            <label>Mois de présence (ho an'ny Prime)</label>
+            <input type="number" id="mois_presence" placeholder="Volana niasana tamin'ny taona">
+        </div>
+        <div class="field">
+            <label>Antony nialana (Motif du départ)</label>
+            <select id="motif_licenciement">
+                <option value="demission">Démission / Hafa (Tsy misy IL)</option>
+                <option value="eco">Licenciement économique (Art. 55)</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="btn" onclick="calculerSTC()">Kajio ny STC</button>
+
+    <div id="result-box">
+        <div class="line"><span>S (Salaire prorata) :</span> <span id="res_s">0</span> Ar</div>
+        <div class="line"><span>ICP (Indemnité de Congés Payés) :</span> <span id="res_icp">0</span> Ar</div>
+        <div class="line"><span>IP (Indemnité de Préavis) :</span> <span id="res_ip">0</span> Ar</div>
+        <div class="line"><span>IL (Indemnité de Licenciement) :</span> <span id="res_il">0</span> Ar</div>
+        <div class="line"><span>P (Primes Prorata) :</span> <span id="res_p">0</span> Ar</div>
+        <div class="total"><span>TOTAL STC :</span> <span id="res_total">0</span> Ar</div>
+        <p id="alert_plafond" class="alert" style="display:none;">⚠️ Ny IL dia voafetra ho karama 6 volana.</p>
+    </div>
+</div>
+
+<script>
+    // LocalStorage pour persistance
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(el => {
+        el.value = localStorage.getItem('stc_' + el.id) || el.value;
+        el.oninput = () => localStorage.setItem('stc_' + el.id, el.value);
+    });
+
+    function calculerSTC() {
+        const salaireM = parseFloat(document.getElementById('salaire_mensuel').value) || 0;
+        const jOuvrables = parseFloat(document.getElementById('jours_ouvrables').value) || 30;
+        const jTravailles = parseFloat(document.getElementById('jours_travailles').value) || 0;
+        const anciennete = parseFloat(document.getElementById('anciennete').value) || 0;
+        const totalBrutAnnee = parseFloat(document.getElementById('total_brut_annee').value) || 0;
+        const congeRestant = parseFloat(document.getElementById('conge_non_pris').value) || 0;
+        const primeT = parseFloat(document.getElementById('prime_totale').value) || 0;
+        const moisP = parseFloat(document.getElementById('mois_presence').value) || 0;
+        const motif = document.getElementById('motif_licenciement').value;
+        const categorie = document.getElementById('categorie_pro').value;
+
+        // 1. S = Salaire prorata
+        const S = (salaireM / jOuvrables) * jTravailles;
+
+        // 2. NOUVELLE FORMULE ICP : ((Brut Annuel / 12) / 30) * Jours restants
+        const ICP = ((totalBrutAnnee / 12) / 30) * congeRestant;
+
+        // 3. IP (Préavis)
+        let dureePreavisMois = 0;
+        if (categorie === "Cadre") {
+            dureePreavisMois = anciennete > 5 ? 6 : 4;
+        } else {
+            if (anciennete < 1) {
+                dureePreavisMois = 1;
+            } else if (anciennete <= 3) {
+                dureePreavisMois = 2;
+            } else {
+                const joursMajoration = (anciennete - 3) * 2;
+                dureePreavisMois = 2 + (joursMajoration / 30);
+            }
+        }
+        const IP = salaireM * dureePreavisMois;
+
+        // 4. IL (Art. 55)
+        let IL = 0;
+        document.getElementById('alert_plafond').style.display = 'none';
+        if (motif === "eco") {
+            const salaireJ = salaireM / 30;
+            IL = (salaireJ * 10) * anciennete;
+            if (IL > (salaireM * 6)) {
+                IL = salaireM * 6;
+                document.getElementById('alert_plafond').style.display = 'block';
+            }
+        }
+
+        // 5. P (Primes)
+        const P = (primeT / 12) * moisP;
+
+        const totalSTC = S + ICP + IP + IL + P;
+
+        // Affichage
+        document.getElementById('result-box').style.display = 'block';
+        document.getElementById('res_s').innerText = Math.round(S).toLocaleString('fr-FR');
+        document.getElementById('res_icp').innerText = Math.round(ICP).toLocaleString('fr-FR');
+        document.getElementById('res_ip').innerText = Math.round(IP).toLocaleString('fr-FR');
+        document.getElementById('res_il').innerText = Math.round(IL).toLocaleString('fr-FR');
+        document.getElementById('res_p').innerText = Math.round(P).toLocaleString('fr-FR');
+        document.getElementById('res_total').innerText = Math.round(totalSTC).toLocaleString('fr-FR');
+    }
+</script>
+
+</body>
+</html>
