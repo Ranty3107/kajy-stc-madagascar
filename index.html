@@ -122,7 +122,7 @@
         // 1. S = Salaire prorata
         const S = (salaireM / jOuvrables) * jTravailles;
 
-        // 2. NOUVELLE FORMULE ICP : ((Brut Annuel / 12) / 30) * Jours restants
+        // 2. NOUVELLE FORMULE ICP
         const ICP = ((totalBrutAnnee / 12) / 30) * congeRestant;
 
         // 3. IP (Préavis)
@@ -166,34 +166,33 @@
         document.getElementById('res_il').innerText = Math.round(IL).toLocaleString('fr-FR');
         document.getElementById('res_p').innerText = Math.round(P).toLocaleString('fr-FR');
         document.getElementById('res_total').innerText = Math.round(totalSTC).toLocaleString('fr-FR');
-    // --- Envoi des données vers Google Sheets ---
-const urlScript = "https://script.google.com/macros/s/AKfycbwfcVh1IUDKQXfzAcdGUeTehbNcF_rDbAd6BriSVnVd6iUiCSCme46dV5aP1SgxB4vp/exec"; // Collez votre lien ici
 
-const donnees = {
-    salaire: salaireM,
-    anciennete: anciennete,
-    total: totalSTC
-};
+        // --- Envoi des données vers Google Sheets ---
+        const urlScript = "https://script.google.com/macros/s/AKfycbwfcVh1IUDKQXfzAcdGUeTehbNcF_rDbAd6BriSVnVd6iUiCSCme46dV5aP1SgxB4vp/exec";
 
-fetch(urlScript, {
-    method: 'POST',
-    mode: 'no-cors', // Important pour éviter les erreurs de sécurité
-    cache: 'no-cache',
-    body: JSON.stringify(donnees)
-}).then(() => {
-    console.log("Données envoyées avec succès !");
-}).catch(err => console.log("Erreur : " + err));
-// --------------------------------------------}
+        const donnees = {
+            salaire: salaireM,
+            anciennete: anciennete,
+            total: totalSTC
+        };
+
+        fetch(urlScript, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            body: JSON.stringify(donnees)
+        });
+    } // <--- CETTE ACCOLADE FERME LA FONCTION
 </script>
-<!-- Section Documentation -->
-    <p style="text-align:center; font-size: 0.8rem; color: #666; margin-top: 30px; padding-bottom: 20px;">
-        Mba hahafantatra bebe kokoa momba ny fomba fikajiana, 
-        <a href="https://github.com/Ranty3107/kajy-stc-madagascar/blob/main/README.md" 
-           target="_blank" 
-           style="color: #0046ad; text-decoration: none; font-weight: 600;">
-           vakio ny README eto
-        </a>.
-    </p>
+
+<p style="text-align:center; font-size: 0.8rem; color: #666; margin-top: 30px; padding-bottom: 20px;">
+    Mba hahafantatra bebe kokoa momba ny fomba fikajiana, 
+    <a href="https://github.com/Ranty3107/kajy-stc-madagascar/blob/main/README.md" 
+       target="_blank" 
+       style="color: #0046ad; text-decoration: none; font-weight: 600;">
+       vakio ny README eto
+    </a>.
+</p>
 
 </body>
 </html>
